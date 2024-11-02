@@ -13,11 +13,6 @@ public abstract class ChessPiece {
     private boolean white;
     protected boolean firstMove = true;
     protected ChessSquare square = null;
-    public List<ChessSquare> threatenedSquares = new ArrayList<>();
-
-    public void addThreatenedSquare(ChessSquare square) {
-        threatenedSquares.add(square);
-    }
 
     public enum Directions {
         STRAIGHT,
@@ -89,19 +84,6 @@ public abstract class ChessPiece {
         square.setChessPiece(null);
         target.setChessPiece(this);
         square = target;
-        threatenSquares();
-    }
-
-    protected void threatenSquares() {
-        if (directions.contains(Directions.STRAIGHT)) {
-            ChessBoard.threatenSquares(this, Directions.STRAIGHT);
-        }
-        if (directions.contains(Directions.DIAGONAL)) {
-            ChessBoard.threatenSquares(this, Directions.DIAGONAL);
-        }
-        if (directions.contains(Directions.HORSE)) {
-            ChessBoard.threatenSquares(this, Directions.HORSE);
-        }
     }
 
     protected boolean isBlocked(int moveX, int moveY) {

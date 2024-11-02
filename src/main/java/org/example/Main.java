@@ -16,8 +16,8 @@ public class Main {
         new Pawn(6, 4, true);
         new Pawn(4, 3, true);
         try {
-            horse.checkDirection(3, 5);
-            horse.moveTo(3, 5);
+            horse.checkDirection(3, 4);
+            horse.moveTo(3, 4);
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }

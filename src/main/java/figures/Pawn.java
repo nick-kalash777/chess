@@ -15,10 +15,6 @@ public class Pawn extends ChessPiece {
         return 'P';
     }
 
-    @Override
-    protected void threatenSquares() {
-        ChessBoard.threatenSquares(this);
-    }
 
     @Override
     public void checkDirection(int x, int y) throws WrongDirectionException {
