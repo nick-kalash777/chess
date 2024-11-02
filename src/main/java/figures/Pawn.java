@@ -1,12 +1,13 @@
 package figures;
 
 import errors.WrongDirectionException;
+import org.example.ChessBoard;
 import org.example.ChessSquare;
 
 public class Pawn extends ChessPiece {
 
-    public Pawn(ChessSquare s, boolean isWhite) {
-        super(s, isWhite);
+    public Pawn(int x, int y, boolean isWhite) {
+        super(x, y, isWhite);
         addDirection(Directions.STRAIGHT);
     }
 
@@ -15,9 +16,15 @@ public class Pawn extends ChessPiece {
     }
 
     @Override
-    public void checkDirection(int[] coordinates) throws WrongDirectionException {
-        int absDistanceX = Math.abs(getX() - coordinates[0]);
-        int absDistanceY = Math.abs(getY() - coordinates[1]);
+    protected void threatenSquares() {
+        ChessBoard.threatenSquares(this);
+    }
+
+    @Override
+    public void checkDirection(int x, int y) throws WrongDirectionException {
+        int absDistanceX = Math.abs(square.getX() - x);
+        int absDistanceY = Math.abs(square.getY() - y);
+        System.out.println(absDistanceX + " " + absDistanceY);
         if (absDistanceY != 0) throw new WrongDirectionException();
         switch(absDistanceX) {
             case 2:
@@ -30,6 +37,6 @@ public class Pawn extends ChessPiece {
 
     @Override
     public String toString() {
-        return "Пешка [" + getX() + "," + getY() + "]";
+        return "Пешка [" + square.getX() + "," + square.getY() + "]";
     }
 }

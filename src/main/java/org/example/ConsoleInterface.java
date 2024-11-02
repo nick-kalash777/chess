@@ -25,15 +25,17 @@ public class ConsoleInterface {
                 System.out.println("Введите координаты вашей фигуры в формате X, Y");
                 int[] coordinates = readCoordinates(scanner);
                 try {
-                    ChessPiece piece = ChessBoard.getPiece(new ChessSquare(coordinates));
+                    ChessPiece piece = ChessBoard.getPiece(coordinates);
                     System.out.println("Ваша фигура: " + piece);
                     System.out.println("Она может двигаться в следующих направлениях:"
                             + " "
                             + piece.getDirectionsString());
                     System.out.println("Введите координаты, куда вы хотите передвинуть фигуру.");
                     coordinates = readCoordinates(scanner);
-                    piece.checkDirection(coordinates);
-                    piece.move(new ChessSquare(coordinates));
+                    int x = coordinates[0];
+                    int y = coordinates[1];
+                    piece.checkDirection(x, y);
+                    piece.moveTo(x, y);
                     System.out.println(piece);
 
                 } catch (NoPieceException

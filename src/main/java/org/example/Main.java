@@ -1,20 +1,27 @@
 package org.example;
 
-import figures.ChessPiece;
 import figures.Horse;
 import figures.Pawn;
 
 public class Main {
     public static void main(String[] args) {
         ChessBoard.createBoard();
-        Horse horse = new Horse(new ChessSquare(5, 4), true);
-        //ChessPiece pawn2 = new Pawn(new ChessSquare(4, 4), true);
-        ChessPiece pawn3 = new Pawn(new ChessSquare(6, 3), true);
-        ChessPiece pawn4 = new Pawn(new ChessSquare(6, 5), true);
-        ChessPiece pawn5 = new Pawn(new ChessSquare(4, 5), true);
-        ChessPiece pawn6 = new Pawn(new ChessSquare(5, 5), true);
-        ChessPiece pawn7 = new Pawn(new ChessSquare(4, 4), true);
-        System.out.println(horse.isBlocked(-1, 2));
+        Horse horse = new Horse(5, 4, true);
+        new Pawn(4, 3, true);
+        new Pawn(4, 4, true);
+        new Pawn(3, 4, true);
+        new Pawn(5, 5, true);
+        new Pawn(5, 3, true);
+        new Pawn(6, 5, true);
+        new Pawn(6, 4, true);
+        new Pawn(4, 3, true);
+        try {
+            horse.checkDirection(3, 5);
+            horse.moveTo(3, 5);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+        System.out.println(horse.getSquare());
 
     }
 }

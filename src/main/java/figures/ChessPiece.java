@@ -5,12 +5,19 @@ import errors.WrongDirectionException;
 import org.example.ChessBoard;
 import org.example.ChessSquare;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 public abstract class ChessPiece {
-    private ChessSquare square;
     private boolean white;
     protected boolean firstMove = true;
+    protected ChessSquare square = null;
+    public List<ChessSquare> threatenedSquares = new ArrayList<>();
+
+    public void addThreatenedSquare(ChessSquare square) {
+        threatenedSquares.add(square);
+    }
 
     public enum Directions {
         STRAIGHT,
@@ -42,27 +49,10 @@ public abstract class ChessPiece {
         return stringBuilder.toString();
     }
 
-    public void checkDirection(int[] coordinates) throws WrongDirectionException {
-        int x = coordinates[0];
-        int y = coordinates[1];
-        int absDistanceX = Math.abs(getX() - x);
-        int absDistanceY = Math.abs(getY() - y);
-        if ((absDistanceX != 0 && absDistanceY == 0) || (absDistanceX == 0 && absDistanceY != 0)) {
-            if (!directions.contains(Directions.STRAIGHT)) throw new WrongDirectionException();
-        } else if (absDistanceX == absDistanceY) {
-            if (!directions.contains(Directions.DIAGONAL)) throw new WrongDirectionException();
-        } else if ((absDistanceX == 2 && absDistanceY == 1)
-        || (absDistanceX == 1 && absDistanceY == 2)) {
-            if (!directions.contains(Directions.HORSE)) throw new WrongDirectionException();
-        } else {
-            throw new WrongDirectionException();
-        }
-    }
-
-    public ChessPiece (ChessSquare s, boolean white) {
-        this.square = s;
+    public ChessPiece (int x, int y, boolean white) {
+        this.square = ChessBoard.getSquareByXY(x, y);
         this.white = white;
-        ChessBoard.board.put(square, this);
+        this.square.setChessPiece(this);
         if (white) ChessBoard.addWhitePiece(this);
         else ChessBoard.addBlackPiece(this);
     }
@@ -76,25 +66,42 @@ public abstract class ChessPiece {
         return white;
     }
 
-    public ChessSquare getSquare() {
-        return square;
+    public void checkDirection(int x, int y) throws WrongDirectionException {
+        int absDistanceX = Math.abs(square.getX() - x);
+        int absDistanceY = Math.abs(square.getY() - y);
+        if ((absDistanceX != 0 && absDistanceY == 0) || (absDistanceX == 0 && absDistanceY != 0)) {
+            if (!directions.contains(Directions.STRAIGHT)) throw new WrongDirectionException();
+        } else if (absDistanceX == absDistanceY) {
+            if (!directions.contains(Directions.DIAGONAL)) throw new WrongDirectionException();
+        } else if ((absDistanceX == 2 && absDistanceY == 1)
+                || (absDistanceX == 1 && absDistanceY == 2)) {
+            if (!directions.contains(Directions.HORSE)) throw new WrongDirectionException();
+        } else {
+            throw new WrongDirectionException();
+        }
     }
 
-    public int getX() {
-        return square.getX();
-    }
-
-    public int getY() {
-        return square.getY();
-    }
-
-    public void move(ChessSquare target) throws PathBlockedException {
-        int[] distance = square.distance(target);
+    public void moveTo(int targetX, int targetY) throws PathBlockedException {
+        ChessSquare target = ChessBoard.getSquareByXY(targetX, targetY);
+        int[] distance = square.distance(targetX, targetY);
         if (isBlocked(distance[0], distance[1])) throw new PathBlockedException();
         firstMove = false;
-        ChessBoard.board.remove(square);
+        square.setChessPiece(null);
+        target.setChessPiece(this);
         square = target;
-        ChessBoard.board.put(target, this);
+        threatenSquares();
+    }
+
+    protected void threatenSquares() {
+        if (directions.contains(Directions.STRAIGHT)) {
+            ChessBoard.threatenSquares(this, Directions.STRAIGHT);
+        }
+        if (directions.contains(Directions.DIAGONAL)) {
+            ChessBoard.threatenSquares(this, Directions.DIAGONAL);
+        }
+        if (directions.contains(Directions.HORSE)) {
+            ChessBoard.threatenSquares(this, Directions.HORSE);
+        }
     }
 
     protected boolean isBlocked(int moveX, int moveY) {
@@ -103,21 +110,16 @@ public abstract class ChessPiece {
         for (int x = xStep, y = yStep;
              Math.abs(x) <= Math.abs(moveX) && Math.abs(y) <= Math.abs(moveY);
              x += xStep, y += yStep) {
-            ChessSquare traversingSquare = new ChessSquare(square.getX() + x, square.getY() + y);
-            if (ChessBoard.board.get(traversingSquare) != null) {
+            ChessSquare traversingSquare = ChessBoard.getSquareByXY(square.getX() + x, square.getY() + y);
+            if (traversingSquare.getChessPiece() != null) {
                 return true;
             }
         }
         return false;
     }
 
-    protected void threatenSquares() {
-        for (ChessSquare square : ChessBoard.board.keySet()) {
-            if (square.isThreatenedBy(this)) square.removeThreat(this);
-        }
-        if (directions.contains(Directions.STRAIGHT)) {
-
-        }
+    public ChessSquare getSquare() {
+        return square;
     }
 
     public abstract char getSymbol();

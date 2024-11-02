@@ -9,7 +9,7 @@ public class ChessSquare {
     private int x;
     private int y;
 
-    private List<ChessPiece> threatenedBy = new ArrayList<ChessPiece>();
+    private ChessPiece chessPiece = null;
 
     public ChessSquare(int x, int y) {
         this.x = x;
@@ -21,26 +21,18 @@ public class ChessSquare {
         this.y = coordinates[1];
     }
 
-    public boolean isThreatened() {
-        return !threatenedBy.isEmpty();
+    public ChessPiece getChessPiece() {
+        return chessPiece;
     }
 
-    public void addThreat(ChessPiece piece) {
-        threatenedBy.add(piece);
+    public void setChessPiece(ChessPiece chessPiece) {
+        this.chessPiece = chessPiece;
     }
 
-    public void removeThreat(ChessPiece piece) {
-        threatenedBy.remove(piece);
-    }
-
-    public boolean isThreatenedBy(ChessPiece piece) {
-        return threatenedBy.contains(piece);
-    }
-
-    public int[] distance(ChessSquare chessSquare) {
+    public int[] distance(int row, int column) {
         int[] distance = new int[2];
-        distance[0] = chessSquare.x - this.x;
-        distance[1] = chessSquare.y - this.y;
+        distance[0] = row - this.x;
+        distance[1] = column - this.y;
 
         return distance;
     }
@@ -60,7 +52,7 @@ public class ChessSquare {
         return false;
     }
 
-    public int hashCode() {
-        return 31 * this.x + this.y;
+    public String toString() {
+        return "Квадрат " + this.x + ", " + this.y;
     }
 }

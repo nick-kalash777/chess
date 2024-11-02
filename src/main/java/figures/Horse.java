@@ -5,8 +5,8 @@ import org.example.ChessSquare;
 
 public class Horse extends ChessPiece {
 
-    public Horse(ChessSquare s, boolean isWhite) {
-        super(s, isWhite);
+    public Horse(int x, int y, boolean isWhite) {
+        super(x, y, isWhite);
         addDirection(Directions.HORSE);
     }
 
@@ -20,14 +20,14 @@ public class Horse extends ChessPiece {
         int distanceY = Math.abs(moveY);
 
         //начинаем идти по X, потом по Y
-        encounteredPieces += traverseSquares(getX(), getY(), xStep, 0, distanceX);
-        encounteredPieces += traverseSquares(getX()+moveX, getY(), 0, yStep, distanceY);
+        encounteredPieces += traverseSquares(square.getX(), square.getY(), xStep, 0, distanceX);
+        encounteredPieces += traverseSquares(square.getX()+moveX, square.getY(), 0, yStep, distanceY);
 
         //если так пройти не получилось, то сначала идем по Y, потом X
         if (encounteredPieces > 1) {
             encounteredPieces = 0;
-            encounteredPieces += traverseSquares(getX(), getY(), 0, yStep, distanceY);
-            encounteredPieces += traverseSquares(getX(), getY()+moveY, xStep, 0, distanceX);
+            encounteredPieces += traverseSquares(square.getX(), square.getY(), 0, yStep, distanceY);
+            encounteredPieces += traverseSquares(square.getX(), square.getY()+moveY, xStep, 0, distanceX);
         }
 
         if (encounteredPieces > 1) return true;
@@ -41,17 +41,16 @@ public class Horse extends ChessPiece {
             x += xStep;
             y += yStep;
 
-            ChessSquare square = new ChessSquare(x, y);
-            System.out.println(x + " " + y);
+            ChessSquare square = ChessBoard.getSquareByXY(x, y);
 
-            if (ChessBoard.board.get(square) != null) encounteredPieces++;
+            if (square.getChessPiece() != null) encounteredPieces++;
         }
         return encounteredPieces;
     }
 
     @Override
     public String toString() {
-        return "Конь [" + getX() + "," + getY() + "]";
+        return "Конь [" + square.getX() + "," + square.getY() + "]";
     }
 
 
