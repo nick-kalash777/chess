@@ -4,42 +4,10 @@ import errors.ChessMovementException;
 import chess.ChessBoard;
 import chess.ChessSquare;
 
-import java.util.EnumSet;
-
 public abstract class ChessPiece {
-    private boolean white;
+    private final boolean white;
     private boolean firstMove = true;
-    private ChessSquare currentSquare = null;
-
-    public enum Directions {
-        STRAIGHT,
-        DIAGONAL,
-        HORSE;
-    }
-
-    protected EnumSet<Directions> directions = EnumSet.noneOf(Directions.class);
-
-    public boolean hasDirection(Directions direction) {
-        return directions.contains(direction);
-    }
-
-    public void addDirection(Directions direction) {
-        directions.add(direction);
-    }
-
-    public String getDirectionsString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (directions.contains(Directions.STRAIGHT)) {
-            stringBuilder.append("ПРЯМО ");
-        }
-        if (directions.contains(Directions.DIAGONAL)) {
-            stringBuilder.append("ПО ДИАГОНАЛИ ");
-        }
-        if (directions.contains(Directions.HORSE)) {
-            stringBuilder.append("БУКВОЙ Г ");
-        }
-        return stringBuilder.toString();
-    }
+    private ChessSquare currentSquare;
 
     public ChessPiece (int x, int y, boolean white) {
         this.currentSquare = ChessBoard.getSquareByXY(x, y);

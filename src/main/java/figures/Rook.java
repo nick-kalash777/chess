@@ -6,7 +6,6 @@ public class Rook extends ChessPiece {
 
     public Rook(int x, int y, boolean isWhite) {
         super(x, y, isWhite);
-        addDirection(Directions.STRAIGHT);
     }
 
     @Override

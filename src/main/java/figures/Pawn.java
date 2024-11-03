@@ -5,12 +5,8 @@ import chess.ChessBoard;
 
 public class Pawn extends ChessPiece {
 
-    //какое направление для пешки считается "вперед по Y" если белая
-    private double forwardY = 1;
-
     public Pawn(int x, int y, boolean isWhite) {
         super(x, y, isWhite);
-        addDirection(Directions.STRAIGHT);
     }
 
     public char getSymbol() {
@@ -19,6 +15,9 @@ public class Pawn extends ChessPiece {
 
     @Override
     public void tryToReach(int targetX, int targetY) throws ChessMovementException {
+        //какое направление для пешки считается "вперед по Y" если белая
+        final int forwardY = 1;
+
         int x = getCurrentSquare().getX();
         int y = getCurrentSquare().getY();
 

@@ -6,8 +6,6 @@ public class Queen extends ChessPiece {
 
     public Queen(int x, int y, boolean isWhite) {
         super(x, y, isWhite);
-        addDirection(Directions.STRAIGHT);
-        addDirection(Directions.DIAGONAL);
     }
 
     public char getSymbol() {

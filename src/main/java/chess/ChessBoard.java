@@ -2,7 +2,6 @@ package chess;
 
 import errors.*;
 import figures.ChessPiece;
-import figures.Horse;
 import figures.King;
 import figures.Rook;
 
@@ -34,12 +33,12 @@ public class ChessBoard {
             new figures.Pawn(x, 2, true);
         }
         new figures.Rook(1, 1, true);
-        new Horse(2, 1, true);
+        new figures.Horse(2, 1, true);
         new figures.Bishop(3, 1, true);
         new figures.King(4, 1, true);
         new figures.Queen(5, 1, true);
         new figures.Bishop(6, 1, true);
-        new Horse(7, 1, true);
+        new figures.Horse(7, 1, true);
         new figures.Rook(8, 1, true);
 
         //черные
@@ -47,12 +46,12 @@ public class ChessBoard {
             new figures.Pawn(x, 7, false);
         }
         new figures.Rook(1, 8, false);
-        new Horse(2, 8, false);
+        new figures.Horse(2, 8, false);
         new figures.Bishop(3, 8, false);
         new figures.King(4, 8, false);
         new figures.Queen(5, 8, false);
         new figures.Bishop(6, 8, false);
-        new Horse(7, 8, false);
+        new figures.Horse(7, 8, false);
         new figures.Rook(8, 8, false);
 
 
@@ -67,6 +66,7 @@ public class ChessBoard {
     }
 
     public static ChessPiece getPiece (int[] coordinates) throws NoPieceException, WrongColorException {
+
         ChessSquare square = getSquareByXY(coordinates[0], coordinates[1]);
         ChessPiece piece = square.getChessPiece();
 
@@ -133,6 +133,12 @@ public class ChessBoard {
         if (king.hasMoved())
             throw new ChessMovementException("Нельзя совершать рокировку, когда король уже сделал ход.");
 
+        int kingX = king.getCurrentSquare().getX();
+        int currentY = king.getCurrentSquare().getY();
+
+        if (isUnderThreat(kingX, currentY))
+            throw new ChessMovementException("Нельзя совершать рокировку, пока объявлен шах.");
+
         if (rooks[0] != null && rooks[1] != null) {
             System.out.println("С какой ладьей вы хотите сделать рокировку?");
             System.out.println("1. " + rooks[0]);
@@ -153,8 +159,6 @@ public class ChessBoard {
         if (finalRook.hasMoved())
             throw new ChessMovementException("Нельзя совершать рокировку, когда ладья уже сделала ход.");
 
-        int kingX = king.getCurrentSquare().getX();
-        int currentY = king.getCurrentSquare().getY();
         int rookX = finalRook.getCurrentSquare().getX();
         finalRook.tryToReach(kingX, currentY);
 

@@ -18,21 +18,18 @@ public class ConsoleInterface {
             System.out.println("1. Передвинуть фигуру.");
             System.out.println("2. Отобразить доску.");
             System.out.println("3. Совершить рокировку.");
+            System.out.println("99. Завершить программу.");
 
             Scanner scanner = new Scanner(System.in).useDelimiter("\\n");
-            ;
 
             try {
                 int choice = scanner.nextInt();
                 switch (choice) {
-                    case 1:
+                    case 1: {
                         System.out.println("Введите координаты вашей фигуры в формате X, Y");
                         int[] coordinates = readCoordinates(scanner);
                         ChessPiece piece = ChessBoard.getPiece(coordinates);
                         System.out.println("Ваша фигура: " + piece);
-                        System.out.println("Она может двигаться в следующих направлениях:"
-                                + " "
-                                + piece.getDirectionsString());
                         System.out.println("Введите координаты, куда вы хотите передвинуть фигуру.");
                         coordinates = readCoordinates(scanner);
                         int x = coordinates[0];
@@ -43,7 +40,7 @@ public class ConsoleInterface {
                         showBoard();
 
                         break;
-
+                    }
                     case 2:
                         showBoard();
                         break;
@@ -51,8 +48,10 @@ public class ConsoleInterface {
                         ChessBoard.castling(scanner);
                         ChessBoard.turn();
                         break;
+                    case 99:
+                        System.exit(0);
                 }
-            } catch (InputMismatchException _) {
+            } catch (InputMismatchException e) {
                 System.err.println("Используйте только отображенные выше цифры.");
             } catch (NoPieceException
                      | WrongColorException
@@ -67,12 +66,17 @@ public class ConsoleInterface {
     }
 
     private void showBoard() {
-        System.out.println("  a|b|c|d|e|f|g|h|");
+        //на настоящей шахматной доске будут буквы, но тут для удобства
+        System.out.println("  1 2 3 4 5 6 7 8 ");
         for (int i = 1; i < 9; i++) {
             System.out.print(i + " ");
             for (int j = 1; j < 9; j++) {
                 ChessSquare square = ChessBoard.getSquareByXY(j, i);
-                if (square.getChessPiece() != null) System.out.print(square.getChessPiece().getSymbol() + "|");
+                ChessPiece piece = square.getChessPiece();
+                if (piece != null) {
+                    if (piece.isWhite()) System.out.print(piece.getSymbol() + "|");
+                    else System.out.print(Character.toLowerCase(piece.getSymbol()) + "|");
+                }
                 else System.out.print(" |");
             }
             System.out.println();
@@ -84,6 +88,7 @@ public class ConsoleInterface {
         String[] coordinates = coordinateString.split(",");
         int x = Integer.parseInt(coordinates[0].trim());
         int y = Integer.parseInt(coordinates[1].trim());
+        if (x > 8 || x < 1 || y > 8 || y < 1) throw new IndexOutOfBoundsException();
         return new int[]{x, y};
     }
 }

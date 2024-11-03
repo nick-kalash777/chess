@@ -8,7 +8,6 @@ public class Horse extends ChessPiece {
 
     public Horse(int x, int y, boolean isWhite) {
         super(x, y, isWhite);
-        addDirection(Directions.HORSE);
     }
 
     @Override

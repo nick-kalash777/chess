@@ -7,8 +7,6 @@ public class King extends ChessPiece {
 
     public King(int x, int y, boolean isWhite) {
         super(x, y, isWhite);
-        addDirection(ChessPiece.Directions.STRAIGHT);
-        addDirection(ChessPiece.Directions.DIAGONAL);
     }
 
     @Override

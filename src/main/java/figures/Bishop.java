@@ -6,7 +6,6 @@ public class Bishop extends ChessPiece {
 
     public Bishop(int x, int y, boolean isWhite) {
         super(x, y, isWhite);
-        addDirection(Directions.DIAGONAL);
     }
 
     @Override
