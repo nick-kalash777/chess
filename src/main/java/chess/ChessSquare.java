@@ -1,9 +1,6 @@
-package org.example;
+package chess;
 
 import figures.ChessPiece;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ChessSquare {
     private int x;
@@ -29,10 +26,18 @@ public class ChessSquare {
         this.chessPiece = chessPiece;
     }
 
-    public int[] distance(int row, int column) {
+    public int[] distanceTo(int x, int y) {
         int[] distance = new int[2];
-        distance[0] = row - this.x;
-        distance[1] = column - this.y;
+        distance[0] = x - this.x;
+        distance[1] = y - this.y;
+
+        return distance;
+    }
+
+    public int[] distanceFrom(int x, int y) {
+        int[] distance = new int[2];
+        distance[0] = this.x - x;
+        distance[1] = this.y - y;
 
         return distance;
     }
@@ -55,4 +60,6 @@ public class ChessSquare {
     public String toString() {
         return "Квадрат " + this.x + ", " + this.y;
     }
+
+
 }

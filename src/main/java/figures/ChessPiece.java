@@ -1,18 +1,15 @@
 package figures;
 
-import errors.PathBlockedException;
-import errors.WrongDirectionException;
-import org.example.ChessBoard;
-import org.example.ChessSquare;
+import errors.ChessMovementException;
+import chess.ChessBoard;
+import chess.ChessSquare;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 
 public abstract class ChessPiece {
     private boolean white;
-    protected boolean firstMove = true;
-    protected ChessSquare square = null;
+    private boolean firstMove = true;
+    private ChessSquare currentSquare = null;
 
     public enum Directions {
         STRAIGHT,
@@ -45,11 +42,10 @@ public abstract class ChessPiece {
     }
 
     public ChessPiece (int x, int y, boolean white) {
-        this.square = ChessBoard.getSquareByXY(x, y);
+        this.currentSquare = ChessBoard.getSquareByXY(x, y);
         this.white = white;
-        this.square.setChessPiece(this);
-        if (white) ChessBoard.addWhitePiece(this);
-        else ChessBoard.addBlackPiece(this);
+        this.currentSquare.setChessPiece(this);
+        ChessBoard.addPiece(this);
     }
 
     public String getColor() {
@@ -61,49 +57,78 @@ public abstract class ChessPiece {
         return white;
     }
 
-    public void checkDirection(int x, int y) throws WrongDirectionException {
-        int absDistanceX = Math.abs(square.getX() - x);
-        int absDistanceY = Math.abs(square.getY() - y);
-        if ((absDistanceX != 0 && absDistanceY == 0) || (absDistanceX == 0 && absDistanceY != 0)) {
-            if (!directions.contains(Directions.STRAIGHT)) throw new WrongDirectionException();
-        } else if (absDistanceX == absDistanceY) {
-            if (!directions.contains(Directions.DIAGONAL)) throw new WrongDirectionException();
-        } else if ((absDistanceX == 2 && absDistanceY == 1)
-                || (absDistanceX == 1 && absDistanceY == 2)) {
-            if (!directions.contains(Directions.HORSE)) throw new WrongDirectionException();
-        } else {
-            throw new WrongDirectionException();
+    public void destroy() {
+        ChessBoard.removePiece(this);
+        currentSquare.setChessPiece(null);
+
+    }
+
+    public ChessSquare getCurrentSquare() {
+        return currentSquare;
+    }
+
+    public void setCurrentSquare(ChessSquare square) {
+        this.currentSquare = square;
+    }
+
+    public void tryMoveTo(int targetX, int targetY) throws ChessMovementException {
+        if (getCurrentSquare().getX() == targetX && getCurrentSquare().getY() == targetY) {
+            throw new ChessMovementException("Фигура уже находится в этой клетке.");
         }
-    }
+        tryToReach(targetX, targetY);
 
-    public void moveTo(int targetX, int targetY) throws PathBlockedException {
         ChessSquare target = ChessBoard.getSquareByXY(targetX, targetY);
-        int[] distance = square.distance(targetX, targetY);
-        if (isBlocked(distance[0], distance[1])) throw new PathBlockedException();
-        firstMove = false;
-        square.setChessPiece(null);
-        target.setChessPiece(this);
-        square = target;
+        ChessPiece targetPiece = target.getChessPiece();
+        if (targetPiece != null) {
+            if (targetPiece.isWhite() == isWhite())
+                throw new ChessMovementException("Вы не можете атаковать собственную фигуру.");
+            targetPiece.destroy();
+        }
+
+        moveTo(target);
     }
 
-    protected boolean isBlocked(int moveX, int moveY) {
-        int xStep = Integer.compare(moveX, 0);
-        int yStep = Integer.compare(moveY, 0);
-        for (int x = xStep, y = yStep;
-             Math.abs(x) <= Math.abs(moveX) && Math.abs(y) <= Math.abs(moveY);
-             x += xStep, y += yStep) {
-            ChessSquare traversingSquare = ChessBoard.getSquareByXY(square.getX() + x, square.getY() + y);
-            if (traversingSquare.getChessPiece() != null) {
+    //ignores all restriction on movement. Don't call unless sure that no pieces in the targetSquare
+    public void moveTo(ChessSquare target) {
+        currentSquare.setChessPiece(null);
+        setCurrentSquare(target);
+        target.setChessPiece(this);
+        firstMove();
+    }
+
+    public void moveTo(int targetX, int targetY) {
+        ChessSquare target = ChessBoard.getSquareByXY(targetX, targetY);
+        moveTo(target);
+    }
+
+    protected boolean isPathBlocked(int x, int y, int distanceX, int distanceY) {
+        int stepX = Integer.compare(distanceX, 0);
+        int stepY = Integer.compare(distanceY, 0);
+
+        int steps = Math.max(Math.abs(distanceX), Math.abs(distanceY));
+
+        for (int i = 1; i < steps; i++, x += stepX, y += stepY) {
+            int newX = x + stepX;
+            int newY = y + stepY;
+            ChessSquare newSquare = ChessBoard.getSquareByXY(newX, newY);
+            if (newSquare.getChessPiece() != null) {
                 return true;
             }
         }
         return false;
     }
 
-    public ChessSquare getSquare() {
-        return square;
+    public void firstMove() {
+        firstMove = false;
     }
 
+    public boolean hasMoved() {
+        return !firstMove;
+    }
+
+    public abstract void tryToReach(int targetX, int targetY) throws ChessMovementException;
+
+    //used in ChessBoard.castling() to determine piece type
     public abstract char getSymbol();
 
     public abstract String toString();
