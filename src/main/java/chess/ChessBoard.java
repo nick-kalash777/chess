@@ -27,7 +27,7 @@ public class ChessBoard {
 
     public static void createPieces() {
         allPieces = new ArrayList<>();
-
+        currentlyWhite = true;
         //Белые
         for (int x = 1; x < 9; x++) {
             new figures.Pawn(x, 2, true);

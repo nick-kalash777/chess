@@ -18,6 +18,7 @@ public class ConsoleInterface {
             System.out.println("1. Передвинуть фигуру.");
             System.out.println("2. Отобразить доску.");
             System.out.println("3. Совершить рокировку.");
+            System.out.println("98. Перезапустить игру.");
             System.out.println("99. Завершить программу.");
 
             Scanner scanner = new Scanner(System.in).useDelimiter("\\n");
@@ -46,6 +47,10 @@ public class ConsoleInterface {
                     case 3:
                         ChessBoard.castling(scanner);
                         ChessBoard.turn();
+                        break;
+                    case 98:
+                        ChessBoard.createBoard();
+                        System.out.println("Игра была перезапущена.");
                         break;
                     case 99:
                         System.exit(0);
