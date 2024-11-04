@@ -23,7 +23,7 @@ public class King extends ChessPiece {
         if (Math.abs(distanceX) > 1 || Math.abs(distanceY) > 1)
             throw new ChessMovementException("Король не может двигаться больше, чем на 1 клетку.");
 
-        if (ChessBoard.isUnderThreat(targetX, targetY))
+        if (ChessBoard.isUnderAttack(targetX, targetY))
             throw new ChessMovementException("Король не может двигаться в клетку, которая находится под угрозой.");
 
         if (isPathBlocked(x, y, distanceX, distanceY))

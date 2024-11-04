@@ -35,14 +35,13 @@ public class ConsoleInterface {
                         int x = coordinates[0];
                         int y = coordinates[1];
                         piece.tryMoveTo(x, y);
-                        ChessBoard.isUnderThreat(x, y);
                         ChessBoard.turn();
-                        showBoard();
+                        ChessBoard.printBoard();
 
                         break;
                     }
                     case 2:
-                        showBoard();
+                        ChessBoard.printBoard();
                         break;
                     case 3:
                         ChessBoard.castling(scanner);
@@ -62,24 +61,6 @@ public class ConsoleInterface {
             } catch (NumberFormatException _) {
                 System.err.println("Перечисляйте координаты через запятую.");
             }
-        }
-    }
-
-    private void showBoard() {
-        //на настоящей шахматной доске будут буквы, но тут для удобства
-        System.out.println("  1 2 3 4 5 6 7 8 ");
-        for (int i = 1; i < 9; i++) {
-            System.out.print(i + " ");
-            for (int j = 1; j < 9; j++) {
-                ChessSquare square = ChessBoard.getSquareByXY(j, i);
-                ChessPiece piece = square.getChessPiece();
-                if (piece != null) {
-                    if (piece.isWhite()) System.out.print(piece.getSymbol() + "|");
-                    else System.out.print(Character.toLowerCase(piece.getSymbol()) + "|");
-                }
-                else System.out.print(" |");
-            }
-            System.out.println();
         }
     }
 

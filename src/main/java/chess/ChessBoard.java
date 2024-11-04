@@ -79,6 +79,37 @@ public class ChessBoard {
         return piece;
     }
 
+    public static void moveToPosition (int pieceX, int pieceY, int targetX, int targetY)
+            throws NoPieceException, WrongColorException, ChessMovementException {
+        ChessPiece piece = getPiece(new int[] {pieceX, pieceY});
+        piece.tryMoveTo(targetX, targetY);
+        turn();
+    }
+
+    public static String nowPlayerColor() {
+        if (currentlyWhite) return "Белый";
+        return "Черный";
+    }
+
+    public static void printBoard() {
+        //на настоящей шахматной доске будут буквы, но тут для удобства
+        System.out.println("  1 2 3 4 5 6 7 8 ");
+        for (int i = 1; i < 9; i++) {
+            System.out.print(i + " ");
+            for (int j = 1; j < 9; j++) {
+                ChessSquare square = ChessBoard.getSquareByXY(j, i);
+                ChessPiece piece = square.getChessPiece();
+                if (piece != null) {
+                    if (piece.isWhite()) System.out.print(piece.getSymbol() + "|");
+                    else System.out.print(Character.toLowerCase(piece.getSymbol()) + "|");
+                }
+                else System.out.print(" |");
+            }
+            System.out.println();
+        }
+    }
+
+
     public static boolean isCurrentlyWhite() {
         return currentlyWhite;
     }
@@ -92,7 +123,7 @@ public class ChessBoard {
         return allPieces;
     }
 
-    public static boolean isUnderThreat(int targetX, int targetY) {
+    public static boolean isUnderAttack(int targetX, int targetY) {
         for (ChessPiece piece : getAllPieces()) {
             try {
                 if (piece.getCurrentSquare() == getSquareByXY(targetX, targetY)) continue;
@@ -136,7 +167,7 @@ public class ChessBoard {
         int kingX = king.getCurrentSquare().getX();
         int currentY = king.getCurrentSquare().getY();
 
-        if (isUnderThreat(kingX, currentY))
+        if (isUnderAttack(kingX, currentY))
             throw new ChessMovementException("Нельзя совершать рокировку, пока объявлен шах.");
 
         if (rooks[0] != null && rooks[1] != null) {
